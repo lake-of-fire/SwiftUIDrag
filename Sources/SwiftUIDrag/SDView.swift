@@ -2,8 +2,10 @@ import SwiftUI
 
 /// A wrapper-view enabling drag, float and/or collapse behaviour for its content.
 public struct SDView<Content: View>: View {
+    #if os(iOS)
     /// The horizontal size class of the device in use.
     @Environment(\.horizontalSizeClass) private var sizeClass
+    #endif
     
     /// The drag gesture state of the content.
     @GestureState private var dragState: SDDragState = SDDragState.inactive
@@ -103,6 +105,7 @@ public struct SDView<Content: View>: View {
                             }
                         }
                 )
+#if os(iOS)
                 .onChange(of: sizeClass) { value in
                     geometryEngine.update(rect: &contentRect, in: proxy.size, with: alignment)
                     
@@ -110,6 +113,7 @@ public struct SDView<Content: View>: View {
                         contentDrag = CGSize(width: geometryEngine.offset.x, height: geometryEngine.offset.y)
                     }
                 }
+#endif
                 .onPreferenceChange(SDViewGeometry.self) { rect in
                     var updatedRect: CGRect = rect
                     

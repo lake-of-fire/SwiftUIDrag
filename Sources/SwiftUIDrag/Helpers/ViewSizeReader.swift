@@ -7,8 +7,10 @@ internal protocol SDGeometryPreferenceKey: PreferenceKey where Value == CGRect {
 
 /// The view modifier used to determine the rect of the content in the SDView.
 internal struct SDSizeReader<Key: SDGeometryPreferenceKey>: ViewModifier {
+#if os(iOS)
     /// The horizontal size class of the device in use.
     @Environment(\.horizontalSizeClass) var sizeClass
+#endif
     
     /// The rect of the content.
     @State private var rect: CGRect = .zero
@@ -22,9 +24,11 @@ internal struct SDSizeReader<Key: SDGeometryPreferenceKey>: ViewModifier {
                         .onAppear {
                             rect = geo.frame(in: .named(SDCoordinateSpaceNames.SDView))
                         }
+#if os(iOS)
                         .onChange(of: sizeClass) { value in
                             rect = geo.frame(in: .named(SDCoordinateSpaceNames.SDView))
                         }
+#endif
                         .preference(key: Key.self, value: rect)
                 }
             )
